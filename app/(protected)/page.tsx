@@ -1,9 +1,14 @@
+import Posts from "@/components/posts/posts";
+import Stories from "@/components/stories/stories";
 import { initialUser } from "@/utils/initial-user";
-import { UserButton } from "@clerk/nextjs";
-import { Button } from "@mui/material";
 
 export default async function Home() {
   const currentUser = await initialUser();
   if (!currentUser) return;
-  return <div>Main Feed</div>;
+  return (
+    <div className="flex flex-col ml-[250px] mr-[450px] w-full">
+      <Stories />
+      <Posts />
+    </div>
+  );
 }

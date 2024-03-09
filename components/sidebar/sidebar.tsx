@@ -8,7 +8,7 @@ export const SideBar = async () => {
   if (!user) return;
 
   return (
-    <div className="w-[250px] border-r h-screen border-gray-800">
+    <div className="w-[250px] fixed border-r h-screen border-gray-800">
       <div className="p-6">
         <Image src="/logo.png" alt="logo" width={150} height={100} />
       </div>
