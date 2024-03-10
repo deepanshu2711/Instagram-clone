@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaRegComment, FaRegHeart } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 interface PostProps {
   postUrl: string;
@@ -13,10 +14,13 @@ interface PostProps {
   userId: string;
   likes: string[];
   comments: string[];
+  postId: string;
 }
 
-const Post = ({ postUrl, description, userId, likes, comments }: PostProps) => {
+const Post = ({ postUrl, description, userId, likes, postId }: PostProps) => {
   const [userData, setUserData] = useState<any>(null);
+  const [conmments, setComments] = useState<any>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const getUser = async () => {
@@ -27,6 +31,16 @@ const Post = ({ postUrl, description, userId, likes, comments }: PostProps) => {
     };
     getUser();
   }, [userId]);
+
+  useEffect(() => {
+    const getComments = async () => {
+      const res = await axios.post(`/api/get-comments`, {
+        postId: postId,
+      });
+      setComments(res.data.comments);
+    };
+    getComments();
+  }, [postId]);
 
   return (
     <div className="flex flex-col border-b border-gray-700 w-full">
@@ -63,8 +77,11 @@ const Post = ({ postUrl, description, userId, likes, comments }: PostProps) => {
           <p className="text-gray-400 text-sm">{description}</p>
         </div>
         <div>
-          <p className="text-sm hover:underline text-gray-300 cursor-pointer hover:text-white">
-            View all {comments.length} comments
+          <p
+            onClick={() => router.push(`/post/${postId}`)}
+            className="text-sm hover:underline text-gray-300 cursor-pointer hover:text-white"
+          >
+            View all {conmments.length} comments
           </p>
         </div>
       </div>

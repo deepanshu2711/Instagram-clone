@@ -17,6 +17,7 @@ const Posts = ({ allPosts }: PostsProps) => {
               likes={post.likes}
               postUrl={post.postUrl}
               userId={post.userId}
+              postId={post.id}
             />
           ))}
       </div>
