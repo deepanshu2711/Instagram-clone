@@ -4,6 +4,7 @@ import { MdHomeFilled } from "react-icons/md";
 import SidebarElement from "./sidebar-element";
 import { useEffect, useRef } from "react";
 import { nanoid } from "nanoid";
+import { useUser } from "@clerk/nextjs";
 import {
   Avatar,
   Button,
@@ -31,6 +32,7 @@ const SidebarElements = () => {
   const [fileurl, setFileurl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [caption, setCaption] = useState("");
+  const { user } = useUser();
 
   useEffect(() => {
     const handleUpload = async () => {
@@ -56,6 +58,7 @@ const SidebarElements = () => {
       }
       setUploading(false);
     };
+
     handleUpload();
   }, [File]);
 
@@ -76,6 +79,7 @@ const SidebarElements = () => {
       setCaption("");
       setFileurl("");
       setFile(null);
+      window.location.reload();
     } catch (error) {
       console.log(error);
     }
@@ -141,8 +145,8 @@ const SidebarElements = () => {
           )}
           <div className="w-full">
             <div className="flex gap-2 items-center mb-5">
-              <Avatar src="./profile.jpg" />
-              <p className="text-white">Deepanshu saini</p>
+              <Avatar src={user?.imageUrl} />
+              <p className="text-white">{`${user?.firstName} ${user?.lastName}`}</p>
             </div>
             <form className="">
               <textarea

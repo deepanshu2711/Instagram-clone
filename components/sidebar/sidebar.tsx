@@ -16,7 +16,7 @@ export const SideBar = async () => {
         <SidebarElements />
       </div>
       <div className="p-6 flex items-center cursor-pointer">
-        <UserButton />
+        <UserButton afterSignOutUrl="/" />
         <p className="ml-6 text-sm hover:underline">{user.name}</p>
       </div>
     </div>
