@@ -42,7 +42,7 @@ const Post = () => {
           </p>
         </div>
         <div>
-          <p className="text-sm hover:underline text-gray-300 cursor-pointer">
+          <p className="text-sm hover:underline text-gray-300 cursor-pointer hover:text-white">
             View all 3 comments
           </p>
         </div>
