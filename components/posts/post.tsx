@@ -4,7 +4,7 @@ import { Avatar } from "@mui/material";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { FaRegComment, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
@@ -17,10 +17,12 @@ interface PostProps {
   postId: string;
 }
 
-const Post = ({ postUrl, description, userId, likes, postId }: PostProps) => {
+const Post = ({ postUrl, description, userId, postId }: PostProps) => {
   const [userData, setUserData] = useState<any>(null);
   const [conmments, setComments] = useState<any>([]);
+  const [liked, setIsLiked] = useState();
   const router = useRouter();
+  const [likes, setLikes] = useState<any>([]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -33,6 +35,28 @@ const Post = ({ postUrl, description, userId, likes, postId }: PostProps) => {
   }, [userId]);
 
   useEffect(() => {
+    const checkLike = async () => {
+      const res = await axios.post(`/api/check-like`, {
+        postId: postId,
+        userId: userId,
+      });
+      console.log(res.data.liked);
+      setIsLiked(res.data.liked);
+    };
+    checkLike();
+  });
+
+  useEffect(() => {
+    const getLikes = async () => {
+      const res = await axios.post(`/api/getLikes`, {
+        postId: postId,
+      });
+      setLikes(res.data.allLikes);
+    };
+    getLikes();
+  }, [postId]);
+
+  useEffect(() => {
     const getComments = async () => {
       const res = await axios.post(`/api/get-comments`, {
         postId: postId,
@@ -41,6 +65,26 @@ const Post = ({ postUrl, description, userId, likes, postId }: PostProps) => {
     };
     getComments();
   }, [postId]);
+
+  const handleLikeClick = async (liked: boolean) => {
+    const res = await axios.post(`/api/like`, {
+      postId: postId,
+      userId: userId,
+      liked: liked,
+    });
+    console.log(res.data.liked);
+    setIsLiked(res.data.liked);
+  };
+
+  const handleDislikeClick = async (liked: boolean) => {
+    const res = await axios.post(`/api/dislike`, {
+      postId: postId,
+      userId: userId,
+      liked: liked,
+    });
+    console.log(res.data.liked);
+    setIsLiked(res.data.liked);
+  };
 
   return (
     <div className="flex flex-col border-b border-gray-700 w-full">
@@ -60,7 +104,17 @@ const Post = ({ postUrl, description, userId, likes, postId }: PostProps) => {
         <Image src={postUrl} alt="logo" width={700} height={700} />
         <div className="flex items-center justify-between p-3">
           <div className="flex gap-6">
-            <FaRegHeart className="h-7 w-7 cursor-pointer" />
+            {liked ? (
+              <FaHeart
+                className="h-7 w-7 cursor-pointer text-red-600"
+                onClick={() => handleDislikeClick(false)}
+              />
+            ) : (
+              <FaRegHeart
+                className="h-7 w-7 cursor-pointer"
+                onClick={() => handleLikeClick(true)}
+              />
+            )}
             <FaRegComment className="h-7 w-7 cursor-pointer" />
           </div>
           <div>
