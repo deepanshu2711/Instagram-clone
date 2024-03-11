@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { io } from "socket.io-client";
 
 interface PostProps {
   postUrl: string;
@@ -23,6 +24,7 @@ const Post = ({ postUrl, description, userId, postId }: PostProps) => {
   const [liked, setIsLiked] = useState();
   const router = useRouter();
   const [likes, setLikes] = useState<any>([]);
+  const [socket, setSocket] = useState<any>(undefined);
 
   useEffect(() => {
     const getUser = async () => {
@@ -66,7 +68,32 @@ const Post = ({ postUrl, description, userId, postId }: PostProps) => {
     getComments();
   }, [postId]);
 
+  useEffect(() => {
+    const socket = io("http://localhost:3000");
+    socket.on("like", (data: any) => {
+      setLikes([...likes, data]);
+    });
+
+    socket.on("dislike", (data: any) => {
+      setLikes(
+        likes.filter((like: any) => {
+          return like.userId !== data.userId && like.postId !== data.postId;
+        })
+      );
+    });
+
+    setSocket(socket);
+    return () => {
+      socket.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleLikeClick = async (liked: boolean) => {
+    socket.emit("like", {
+      postId: postId,
+      userId: userId,
+    });
     const res = await axios.post(`/api/like`, {
       postId: postId,
       userId: userId,
@@ -77,6 +104,10 @@ const Post = ({ postUrl, description, userId, postId }: PostProps) => {
   };
 
   const handleDislikeClick = async (liked: boolean) => {
+    socket.emit("dislike", {
+      postId: postId,
+      userId: userId,
+    });
     const res = await axios.post(`/api/dislike`, {
       postId: postId,
       userId: userId,

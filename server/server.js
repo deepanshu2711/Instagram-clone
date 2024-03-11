@@ -15,6 +15,14 @@ io.on('connection', (socket) => {
         io.emit("comment", data)
     })
 
+    socket.on("like", (data) => {
+        io.emit("like", data)
+    })
+
+    socket.on("dislike", (data) => {
+        io.emit("dislike", data)
+    })
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
